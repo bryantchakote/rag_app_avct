@@ -30,7 +30,9 @@ A Singleton instance of `RagService` provides the following methods:
 
 ```python
 from advanced_chatbot.services.rag_services import RagService
-doc_path = "~/home/me/ai_chat/pkg/advanced_chatbot/data/livre_ux_digital_design_lab_1.pdf"
+
+from pathlib import Path
+doc_path = Path("~/home/me/ai_chat/pkg/advanced_chatbot/data/livre_ux_digital_design_lab_1.pdf")
 
 # 1. Loading the document (Indexing/Ingestion)
 index_id, _ = RagService.create_vector_store_index(doc_path)
@@ -40,7 +42,7 @@ index_id, _ = RagService.create_vector_store_index(doc_path)
 
 # 2. Querying the document
 query = "What is the role of a UX designer?"
-output, sources = RagService.query(query, [], [index_id])
+output, sources = RagService.complete_chat(query, [], [index_id])
 
 # 3. Displaying the output
 for x in output:
