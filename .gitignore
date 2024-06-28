@@ -1,2 +1,5 @@
 .env.local
 advanced_chatbot.egg-info
+*.pyc
+*.pyo
+__pycache__/
