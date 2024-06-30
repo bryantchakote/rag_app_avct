@@ -1,5 +1,6 @@
 import streamlit as st
 from pathlib import Path
+from streamlit_extras.bottom_container import bottom
 from advanced_chatbot.services.rag_service import RagService
 
 # App logo
@@ -36,3 +37,31 @@ with st.sidebar:
 			# Column 3: Delete document
 			delete.button(label=":x:", key=f"delete_{document_name}", help="Supprimer ce document", on_click=None, args=None, use_container_width=True)
 			
+# Chat interface
+# Initialize chat history if it doesn't exist
+if "messages" not in st.session_state:
+	st.session_state.messages = []
+
+# Display chat messages from history
+for i, message in enumerate(st.session_state.messages):
+	st.chat_message(message["role"]).markdown(message["content"])
+
+# Prompt input at the bottom of the page
+with bottom():
+	prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s")
+
+if prompt:
+	# Display user message
+	st.chat_message("user").markdown(prompt)
+
+	# Add user message to chat history
+	st.session_state.messages.append({"role": "user", "content": prompt})
+
+	# Get response (return user prompt for the moment)
+	response = prompt
+
+	# Display assistant response
+	st.chat_message("assistant").markdown(response)
+
+	# Add assistant response to chat history
+	st.session_state.messages.append({"role": "assistant", "content": response})
