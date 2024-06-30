@@ -19,4 +19,5 @@ with st.sidebar:
 			# Get document name
 			document_path = Path(index_config["document_path"])
 			document_name = document_path.name
-			st.markdown(document_name)
+			document_extension = document_name.split(".")[-1]
+			st.markdown(document_name[:10] + "..." + document_extension)
