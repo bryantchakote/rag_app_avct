@@ -4,6 +4,7 @@ from pathlib import Path
 from streamlit_extras.bottom_container import bottom
 from llama_index.core.llms import ChatMessage, MessageRole
 from advanced_chatbot.services.rag_service import RagService
+from streamlit_extras.stylable_container import stylable_container
 
 # Functions
 def stream_echo(response):
@@ -106,7 +107,23 @@ for i, message in enumerate(st.session_state.messages):
 with bottom():
 	# Disable prompt input if no document in search area
 	is_prompt_disabled = len(search_area) == 0
-	prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s", disabled=is_prompt_disabled)
+	
+	with stylable_container(
+		key="prompt",
+    css_styles="""
+		[data-testid="stChatInput"] {
+      background-color: #DDD !important;
+    }
+		[data-testid="stChatInputTextArea"] {
+			color: #555 !important;
+		}
+		[data-testid="stChatInputTextArea"]::placeholder {
+			opacity: 0.5 !important;
+			color: #777 !important;
+		}
+    """,
+	):
+		prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s", disabled=is_prompt_disabled)
 
 if prompt:
 	# Display user message
