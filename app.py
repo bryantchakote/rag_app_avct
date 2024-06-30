@@ -2,6 +2,7 @@ import time
 import streamlit as st
 from pathlib import Path
 from streamlit_extras.bottom_container import bottom
+from llama_index.core.llms import ChatMessage, MessageRole
 from advanced_chatbot.services.rag_service import RagService
 
 # Functions
@@ -51,7 +52,7 @@ if "messages" not in st.session_state:
 
 # Display chat messages from history
 for i, message in enumerate(st.session_state.messages):
-	st.chat_message(message["role"]).markdown(message["content"])
+	st.chat_message(message.dict()["role"]).markdown(message.dict()["content"])
 
 # Prompt input at the bottom of the page
 with bottom():
@@ -62,7 +63,7 @@ if prompt:
 	st.chat_message("user").markdown(prompt)
 
 	# Add user message to chat history
-	st.session_state.messages.append({"role": "user", "content": prompt})
+	st.session_state.messages.append(ChatMessage(role=MessageRole.USER, content=prompt))
 
 	# Get response (return user prompt for the moment)
 	response = prompt
@@ -71,4 +72,4 @@ if prompt:
 	st.chat_message("assistant").write_stream(stream_echo(response))
 
 	# Add assistant response to chat history
-	st.session_state.messages.append({"role": "assistant", "content": response})
+	st.session_state.messages.append(ChatMessage(role=MessageRole.ASSISTANT, content=response))
