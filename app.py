@@ -53,6 +53,13 @@ with st.sidebar:
 if "messages" not in st.session_state:
 	st.session_state.messages = []
 
+# Ids of documents in search area
+search_area = [
+	index_config["index_id"]
+	for index_config, include in zip(index_configs, is_in_search_area)
+	if include == 1
+]
+
 # Display chat messages from history
 for i, message in enumerate(st.session_state.messages):
 	st.chat_message(message.dict()["role"]).markdown(message.dict()["content"])
