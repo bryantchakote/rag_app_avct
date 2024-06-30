@@ -66,7 +66,9 @@ for i, message in enumerate(st.session_state.messages):
 
 # Prompt input at the bottom of the page
 with bottom():
-	prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s")
+	# Disable prompt input if no document in search area
+	is_prompt_disabled = len(search_area) == 0
+	prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s", disabled=is_prompt_disabled)
 
 if prompt:
 	# Display user message
