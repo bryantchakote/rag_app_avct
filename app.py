@@ -26,7 +26,7 @@ with st.sidebar:
 			add_in_search_area, summarize, delete = st.columns([8, 1, 1])
 
 			# Column 1: Add document in search area
-			label = document_name[:10] + "..." + document_extension
+			label = document_name[:8] + "..." + document_extension
 			help = "Inclure ce document dans le domaine de recherche de la réponse"
 			add_in_search_area.toggle(label=label, value=True, help=help)
 
