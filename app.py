@@ -1,7 +1,14 @@
+import time
 import streamlit as st
 from pathlib import Path
 from streamlit_extras.bottom_container import bottom
 from advanced_chatbot.services.rag_service import RagService
+
+# Functions
+def stream_echo(response):
+	for word in response.split():
+		yield word + " "
+		time.sleep(0.05)
 
 # App logo
 st.logo("images/logo.png")
@@ -61,7 +68,7 @@ if prompt:
 	response = prompt
 
 	# Display assistant response
-	st.chat_message("assistant").markdown(response)
+	st.chat_message("assistant").write_stream(stream_echo(response))
 
 	# Add assistant response to chat history
 	st.session_state.messages.append({"role": "assistant", "content": response})
