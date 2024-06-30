@@ -5,6 +5,7 @@ from streamlit_extras.bottom_container import bottom
 from llama_index.core.llms import ChatMessage, MessageRole
 from advanced_chatbot.services.rag_service import RagService
 from streamlit_extras.stylable_container import stylable_container
+from advanced_chatbot.config import DATA_PATH
 
 # Functions
 def stream_echo(response):
@@ -40,14 +41,49 @@ def summarize_document(RagService, index_id):
 
 	return
 
+def save_uploaded_file(DATA_PATH, uploaded_file):
+    try:
+        # Ensure DATA_PATH directory exists or create it
+        data_dir = Path(DATA_PATH)
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        # Construct full file path within DATA_PATH
+        file_path = data_dir / uploaded_file.name
+
+        # Write the uploaded file's content to the specified file
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        # Call RagService to create an index or perform other operations
+        RagService.create_vector_store_index(file_path)
+
+        # Notify user of successful file save
+        st.toast("File saved successfully!")
+    
+    except Exception as e:
+        # Handle any errors and show error message to user
+        st.error(f"Error saving file: {e}")
+
 # App logo
 st.logo("images/logo.png")
 
 # App title
 st.title("Résumez et questionnez vos docs")
 
+# Define maximum file size in bytes (200 MB)
+MAX_FILE_SIZE_MB = 200
+MAX_FILE_SIZE = 200 * 1024 * 1024
+
 # Sidebar
 with st.sidebar:
+	#Upload a file
+	with st.expander("Charger des documents"):
+		uploaded_files = st.file_uploader("", type=["pdf", "docx"], accept_multiple_files=True, label_visibility="collapsed")
+		for file in uploaded_files:
+			if file.size > MAX_FILE_SIZE:
+				st.toast(f"File {file.name} exceeds the maximum allowed size of {MAX_FILE_SIZE_MB} MB and will not be saved into the knowledge base.")
+			else:
+				save_uploaded_file(DATA_PATH, file)
   # View the saved docs
 	with st.expander("Consulter la base de connaissances"):
 	  # Retrieve the list of saved docs
