@@ -11,6 +11,34 @@ def stream_echo(response):
 		yield word + " "
 		time.sleep(0.05)
 
+def summarize_document(RagService, index_id):
+	# Get document name
+	index_config = RagService.load_index_config(index_id)
+	document_path = Path(index_config["document_path"])
+	document_name = document_path.name
+
+	# Retrieve the document language
+	document_language = RagService.detect_document_language(index_id)
+	
+	if document_language != "fr":
+		# Summarize the first page only if the document is not in French
+		summarized_document = RagService.translate_and_summarize_first_page_fr(index_id)
+	else:
+		# Summarize the entire document otherwise
+		summarized_document = RagService.summarize_document_index(index_id)
+
+	# Initialize chat history if it doesn't exist
+	if "messages" not in st.session_state:
+		st.session_state.messages = []
+
+	# Define user message and add it to chat history
+	st.session_state.messages.append(ChatMessage(role=MessageRole.USER, content=f"Peux-tu résumer en quelques mots le document {document_name} ?"))
+
+	# Add assistant response (summarized content) to chat history
+	st.session_state.messages.append(ChatMessage(role=MessageRole.ASSISTANT, content=summarized_document))
+
+	return
+
 # App logo
 st.logo("images/logo.png")
 
@@ -33,6 +61,9 @@ with st.sidebar:
 			document_name = document_path.name
 			document_extension = document_name.split(".")[-1]
 
+			# Get document id (index_id)
+			index_id = index_config["index_id"]
+
 			# Display document name, allow selection in user question search area,
 			# and add document summarization and file deletion buttons
 			add_in_search_area, summarize, delete = st.columns([8, 1, 1])
@@ -43,7 +74,14 @@ with st.sidebar:
 			is_in_search_area[i] = add_in_search_area.toggle(label=label, value=True, help=help)
 
 			# Column 2: Summarize document
-			summarize.button(label=":memo:", key=f"summarize_{document_name}", help="Résumer ce document", on_click=None, args=None, use_container_width=True)
+			summarize.button(
+				label=":memo:",
+				key=f"summarize_{document_name}",
+				help="Résumer ce document",
+				on_click=summarize_document,
+				args=(RagService, index_id),
+				use_container_width=True,
+			)
 			
 			# Column 3: Delete document
 			delete.button(label=":x:", key=f"delete_{document_name}", help="Supprimer ce document", on_click=None, args=None, use_container_width=True)
