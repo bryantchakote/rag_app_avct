@@ -76,7 +76,10 @@ if prompt:
 	st.session_state.messages.append(ChatMessage(role=MessageRole.USER, content=prompt))
 
 	# Get response (return user prompt for the moment)
-	response = prompt
+	response, _ = RagService.complete_chat(query=prompt, conversation_history=st.session_state.messages, index_ids=search_area)
+	
+	# Append all token together to have a unified text
+	response = "".join(response)
 
 	# Display assistant response
 	st.chat_message("assistant").write_stream(stream_echo(response))
