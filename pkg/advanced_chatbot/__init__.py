@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 
@@ -25,4 +24,3 @@ elif dotenv_path_example.is_file():
     print("Configuration Loaded from .env")
 else:
     print("No .env file found")
-
