@@ -80,6 +80,29 @@ MAX_FILE_SIZE_MB = 200
 MAX_FILE_SIZE = 200 * 1024 * 1024
 
 # Sidebar
+# Sidebar styles
+st.markdown("""
+	<style>
+		[data-testid="stSidebar"] {
+			background-color: #509A8E !important;
+		}
+		[data-testid="stFileUploaderDropzone"] {
+			background-color: #444 !important;
+			border: 1px solid rgba(68, 68, 68, 0.2) !important;
+			color: #DDD !important;
+		}
+		[data-testid="stFileUploaderDropzoneInstructions"] * {
+			color: #DDD !important;
+		}
+		[data-testid="stExpander"] summary p, [data-testid="stExpander"] summary svg {
+			font-weight: bold !important;
+			color: #DDD !important;
+		}
+	</style>
+	""",
+	unsafe_allow_html=True
+)
+
 with st.sidebar:
 	# Upload a file
 	with st.expander("Charger des documents"):
