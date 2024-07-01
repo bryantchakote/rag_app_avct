@@ -40,6 +40,7 @@ def summarize_document(RagService, index_id):
 	st.session_state.messages.append(ChatMessage(role=MessageRole.ASSISTANT, content=summarized_document))
 
 	return
+       
 
 def save_uploaded_file(DATA_PATH, uploaded_file):
     try:
@@ -64,6 +65,10 @@ def save_uploaded_file(DATA_PATH, uploaded_file):
         # Handle any errors and show error message to user
         st.error(f"Error saving file: {e}")
 
+def delete_document(index_id):
+    RagService.delete_vector_store_index(index_id)
+    st.toast("File deleted successfully!")
+
 # App logo
 st.logo("images/logo.png")
 
@@ -76,14 +81,15 @@ MAX_FILE_SIZE = 200 * 1024 * 1024
 
 # Sidebar
 with st.sidebar:
-	#Upload a file
+	# Upload a file
 	with st.expander("Charger des documents"):
-		uploaded_files = st.file_uploader("", type=["pdf", "docx"], accept_multiple_files=True, label_visibility="collapsed")
+		uploaded_files = st.file_uploader("Charger des documents", type=["pdf", "docx"], accept_multiple_files=True, label_visibility="collapsed")
 		for file in uploaded_files:
 			if file.size > MAX_FILE_SIZE:
 				st.toast(f"File {file.name} exceeds the maximum allowed size of {MAX_FILE_SIZE_MB} MB and will not be saved into the knowledge base.")
 			else:
 				save_uploaded_file(DATA_PATH, file)
+
   # View the saved docs
 	with st.expander("Consulter la base de connaissances"):
 	  # Retrieve the list of saved docs
@@ -121,7 +127,7 @@ with st.sidebar:
 			)
 			
 			# Column 3: Delete document
-			delete.button(label=":x:", key=f"delete_{document_name}", help="Supprimer ce document", on_click=None, args=None, use_container_width=True)
+			delete.button(label=":x:", key=f"delete_{document_name}", help="Supprimer ce document", on_click= delete_document, args=(index_config["index_id"], ), use_container_width=True)
 			
 # Chat interface
 # Initialize chat history if it doesn't exist
@@ -160,6 +166,7 @@ with bottom():
     """,
 	):
 		prompt = st.chat_input("Posez une question sur le.s document.s sélectionné.s", disabled=is_prompt_disabled)
+
 
 if prompt:
 	# Display user message
