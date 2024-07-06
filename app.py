@@ -194,6 +194,10 @@ st.markdown(
             background-color: #DDD !important;
             border-radius: 8px;
         }
+         div[data-testid="stToast"] {
+            background-color: #DDD !important;
+            border-radius: 8px;
+        }
     </style>
 	""",
     unsafe_allow_html=True,
