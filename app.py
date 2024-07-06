@@ -4,7 +4,6 @@ from advanced_chatbot.config import DATA_PATH
 
 import streamlit as st
 from streamlit_extras.bottom_container import bottom
-from streamlit_extras.stylable_container import stylable_container
 
 from llama_index.core.llms import ChatMessage, MessageRole
 from advanced_chatbot.services.rag_service import RagService
@@ -103,26 +102,99 @@ MAX_FILE_SIZE_MB = 200
 MAX_FILE_SIZE = 200 * 1024 * 1024
 
 # Sidebar
-# Sidebar styles
 st.markdown(
     """
 	<style>
-		[data-testid="stSidebar"] {
+        * {
+			color: #444 !important;
+		}
+
+        body, div[data-testid="stApp"], header {
+			background-color: #DDD !important;
+		}
+        
+        section[data-testid="stSidebar"] {
 			background-color: #509A8E !important;
 		}
-		[data-testid="stFileUploaderDropzone"] {
-			background-color: #444 !important;
-			border: 1px solid rgba(68, 68, 68, 0.2) !important;
-			color: #DDD !important;
-		}
-		[data-testid="stFileUploaderDropzoneInstructions"] * {
-			color: #DDD !important;
-		}
-		[data-testid="stExpander"] summary p, [data-testid="stExpander"] summary svg {
+        
+        div[data-testid="stExpander"] details summary * {
 			font-weight: bold !important;
 			color: #DDD !important;
 		}
-	</style>
+
+        div[data-testid="stExpander"] details summary:hover * {
+            color: #FF6C6C !important;
+            font-weight: normal !important;
+        }
+
+        section[data-testid="stFileUploaderDropzone"] {
+			background-color: #444 !important;
+		}
+
+        div[data-testid="stFileUploaderDropzoneInstructions"] div * {
+			color: #DDD !important;
+		}
+		
+		section[data-testid="stFileUploaderDropzone"] button {
+			background-color: #509A8E !important;
+			color: #DDD !important;
+		}
+
+        div[data-testid="stExpanderDetails"] div[data-testid="stCheckbox"] label div:first-child {
+            background-color: rgba(255, 108, 108, 0.8) !important;
+        }
+
+        div[data-testid="stExpanderDetails"] div[data-testid="stCheckbox"] label div:first-child div {
+            background-color: rgba(68, 68, 68, 0.8) !important;
+        }
+
+        div[data-testid="stExpanderDetails"] div[data-testid="stCheckbox"] label div:nth-child(3) * {
+            background-color: #509A8E !important;
+            color: #DDD !important;
+        }
+
+        div[data-testid="stButton"] button {
+            background-color: rgba(50, 154, 142, 1) !important;
+        }
+        
+        div[data-testid="chatAvatarIcon-assistant"] {
+            background-color: #FF6C6C !important;
+        }
+
+        div[data-testid="chatAvatarIcon-user"] {
+            background-color: #509A8E !important;
+        }
+
+        div[data-testid="stBottom"] div {
+            background-color: #DDD;
+        }
+
+        div[data-testid="stBottom"] div div {
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        textarea[data-testid="stChatInputTextArea"] {
+            color: rgba(68, 68, 68, 0.8) !important;
+            caret-color: #444 !important;
+        }
+
+        textarea[data-testid="stChatInputTextArea"]::placeholder {
+            color: rgba(68, 68, 68, 0.4) !important;
+        }
+
+        div[data-testid="stChatMessage"] {
+            background-color: rgba(80, 154, 142, 0.1);
+        }
+
+        div[data-testid="stChatMessage"] div svg path {
+            color: #444 !important;
+        }
+
+        div[data-testid="stTooltipContent"] {
+            background-color: #DDD !important;
+            border-radius: 8px;
+        }
+    </style>
 	""",
     unsafe_allow_html=True,
 )
@@ -216,25 +288,10 @@ with bottom():
     # Disable prompt input if no document in search area
     is_prompt_disabled = len(search_area) == 0
 
-    with stylable_container(
-        key="prompt",
-        css_styles="""
-			[data-testid="stChatInput"] {
-				background-color: #DDD !important;
-			}
-			[data-testid="stChatInputTextArea"] {
-				color: #555 !important;
-			}
-			[data-testid="stChatInputTextArea"]::placeholder {
-				opacity: 0.5 !important;
-				color: #777 !important;
-			}
-			""",
-    ):
-        prompt = st.chat_input(
-            "Posez une question sur le.s document.s sélectionné.s",
-            disabled=is_prompt_disabled,
-        )
+    prompt = st.chat_input(
+        "Posez une question sur le.s document.s sélectionné.s",
+        disabled=is_prompt_disabled,
+    )
 
 if prompt:
     # Display user message
