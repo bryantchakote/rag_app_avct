@@ -64,14 +64,19 @@ def save_uploaded_file(DATA_PATH, uploaded_file, RagService):
 
         # Construct full file path within DATA_PATH
         file_path = data_dir / uploaded_file.name
-
+        index_configs = RagService.list_vector_store_index()
+        for i, index_config in enumerate(index_configs):
+            # Get document name
+            document_path = Path(index_config["document_path"])
+            document_name = document_path.name
+            if uploaded_file.name == document_name:
+                st.toast("File already exist!")
+                return 
         # Write the uploaded file's content to the specified file
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
-
         # Call RagService to create an index or perform other operations
         RagService.create_vector_store_index(file_path)
-
         # Notify user of successful file save
         st.toast("File saved successfully!")
 
@@ -166,7 +171,7 @@ with st.sidebar:
             is_in_search_area[i] = add_in_search_area.toggle(
                 label=label, value=True, help=help
             )
-
+            
             # Column 2: Summarize document
             summarize.button(
                 label=":memo:",
@@ -176,7 +181,7 @@ with st.sidebar:
                 args=(RagService, index_id),
                 use_container_width=True,
             )
-
+    
             # Column 3: Delete document
             delete.button(
                 label=":x:",
