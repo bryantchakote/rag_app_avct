@@ -70,7 +70,7 @@ def save_uploaded_file(DATA_PATH, uploaded_file, RagService):
             document_path = Path(index_config["document_path"])
             document_name = document_path.name
             if uploaded_file.name == document_name:
-                st.toast("File already exist!")
+                st.toast("Un fichier de même nom existe déjà dans la base de données !")
                 return 
         # Write the uploaded file's content to the specified file
         with open(file_path, "wb") as f:
@@ -78,7 +78,7 @@ def save_uploaded_file(DATA_PATH, uploaded_file, RagService):
         # Call RagService to create an index or perform other operations
         RagService.create_vector_store_index(file_path)
         # Notify user of successful file save
-        st.toast("File saved successfully!")
+        st.toast("Fichier sauvegardé !")
 
     except Exception as e:
         # Handle any errors and show error message to user
@@ -88,7 +88,7 @@ def save_uploaded_file(DATA_PATH, uploaded_file, RagService):
 # Delete a document from the knowledge base
 def delete_document(RagService, index_id):
     RagService.delete_vector_store_index(index_id)
-    st.toast("File deleted successfully!")
+    st.toast("Fichier supprimé avec succès !")
 
 
 # App content
@@ -139,7 +139,7 @@ with st.sidebar:
         for file in uploaded_files:
             if file.size > MAX_FILE_SIZE:
                 st.toast(
-                    f"File {file.name} exceeds the maximum allowed size of {MAX_FILE_SIZE_MB} MB and will not be saved into the knowledge base."
+                    f"Le fichier {file.name} dépasse la taille maximale qui est {MAX_FILE_SIZE_MB} MB, nous sommes dans l'impossibilité de le charger dans notre base de données."
                 )
             else:
                 save_uploaded_file(DATA_PATH, file, RagService)
@@ -171,7 +171,7 @@ with st.sidebar:
             is_in_search_area[i] = add_in_search_area.toggle(
                 label=label, value=True, help=help
             )
-            
+
             # Column 2: Summarize document
             summarize.button(
                 label=":memo:",
